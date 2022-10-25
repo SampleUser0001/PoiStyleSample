@@ -24,7 +24,21 @@ public enum DataEnum {
         public void setCellValue(XSSFCell cell, DataModel model) {
             cell.setCellValue(model.getMojiretsu());
         }
+    },
+    DATE(FormatEnum.DATE) {
+        @Override
+        public void setCellValue(XSSFCell cell, DataModel model) {
+            cell.setCellValue(model.getDate());
+        }
+    },
+    WEEK_OF_DAY(FormatEnum.WEEK_OF_DAY) {
+        @Override
+        public void setCellValue(XSSFCell cell, DataModel model) {
+            cell.setCellValue(model.getDate());
+        }
     };
+
+    ;
     
     private FormatEnum format;
     

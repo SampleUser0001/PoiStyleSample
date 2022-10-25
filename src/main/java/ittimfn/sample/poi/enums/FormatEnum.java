@@ -10,7 +10,9 @@ import lombok.Getter;
 public enum FormatEnum {
     LONG("#,##0"),
     DOUBLE("#,##0.0"),
-    STRING("");
+    STRING(""),
+    DATE("yyyy/mm/dd"),
+    WEEK_OF_DAY("aaa");
     
     private String format;
     

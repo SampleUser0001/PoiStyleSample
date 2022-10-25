@@ -3,6 +3,7 @@ package ittimfn.sample.poi;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -33,6 +34,7 @@ public class App {
             dataModel.setSeisu(1000000l);
             dataModel.setShousu(111111.11d);
             dataModel.setMojiretsu("hogehgoe");
+            dataModel.setDate(new Date());
 
             // 本当はDataEnum.values()を使用すればループが使えるが、型ごとに確認したいため、分けて記載する。
             // 整数
@@ -49,6 +51,16 @@ public class App {
             cell = row.createCell(cellIndex++);
             DataEnum.MOJIRETSU.setCellStyle(cell, workbook);
             DataEnum.MOJIRETSU.setCellValue(cell, dataModel);
+            
+            // 日付
+            cell = row.createCell(cellIndex++);
+            DataEnum.DATE.setCellStyle(cell, workbook);
+            DataEnum.DATE.setCellValue(cell, dataModel);
+            
+            // 曜日
+            cell = row.createCell(cellIndex++);
+            DataEnum.WEEK_OF_DAY.setCellStyle(cell, workbook);
+            DataEnum.WEEK_OF_DAY.setCellValue(cell, dataModel);
             
             workbook.write(fos);
             fos.close();
