@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Date;
 
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import ittimfn.sample.poi.enums.DataEnum;
-import ittimfn.sample.poi.enums.FormatEnum;
 import ittimfn.sample.poi.model.DataModel;
 
 /**
@@ -62,6 +60,11 @@ public class App {
             DataEnum.WEEK_OF_DAY.setCellStyle(cell, workbook);
             DataEnum.WEEK_OF_DAY.setCellValue(cell, dataModel);
             
+
+            // プロパティ書き込み
+            // 作成者
+            workbook.getProperties().getCoreProperties().setCreator("ittimfn");
+
             workbook.write(fos);
             fos.close();
             workbook.close();
