@@ -63,7 +63,10 @@ public class App {
 
             // プロパティ書き込み
             // 作成者
-            workbook.getProperties().getCoreProperties().setCreator("ittimfn");
+            workbook.getProperties().getCoreProperties().setCreator("");
+
+            // プログラム名
+            workbook.getProperties().getExtendedProperties().getUnderlyingProperties().setApplication("");
 
             workbook.write(fos);
             fos.close();
