@@ -1,8 +1,8 @@
 package ittimfn.sample.poi.enums;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import lombok.Getter;
 
@@ -20,7 +20,7 @@ public enum FormatEnum {
         this.format = format;
     }
     
-    public void setCellStyle(XSSFCell cell, XSSFWorkbook workbook) {
+    public void setCellStyle(Cell cell, Workbook workbook) {
         CellStyle longStyle = workbook.createCellStyle();
         longStyle.setDataFormat(workbook.createDataFormat().getFormat(this.format));
         cell.setCellStyle(longStyle);

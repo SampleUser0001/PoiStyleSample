@@ -15,7 +15,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.mainClass>ittimfn.sample.poi.App</project.mainClass>
 
-    <poi.version>5.2.2</poi.version>
+    <poi.version>4.1.2</poi.version>
     <log4j2.version>2.17.2</log4j2.version>
     <lombok.version>1.18.24</lombok.version>
   </properties>
