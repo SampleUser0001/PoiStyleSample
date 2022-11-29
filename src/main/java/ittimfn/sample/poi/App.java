@@ -1,5 +1,6 @@
 package ittimfn.sample.poi;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -23,63 +24,34 @@ import ittimfn.sample.poi.model.DataModel;
  *
  */
 public class App {
+    public static final String EXPORT_PATH_PROPERTIES = Paths.get(System.getProperty("user.dir"), "export", "export_properties.xlsx").toString();
     public static final String EXPORT_PATH = Paths.get(System.getProperty("user.dir"), "export", "export.xlsx").toString();
 
-    private Workbook workbook;
+    private int line = 1;
 
     public void exec(String[] args) throws IOException {
-        this.workbook = new SXSSFWorkbook();
-        Sheet sheet = workbook.createSheet();
 
-        try(FileOutputStream fos = new FileOutputStream(EXPORT_PATH);) {
-            Row row = sheet.createRow(0);
-            int cellIndex = 0;
-            
-            DataModel dataModel = new DataModel();
-            dataModel.setSeisu(1000000l);
-            dataModel.setShousu(111111.11d);
-            dataModel.setMojiretsu("hogehgoe");
-            dataModel.setDate(new Date());
+        String sheetName = "sheet";
+        sheetName = this.writeValues(new SXSSFWorkbook(), EXPORT_PATH, true, sheetName);
+//        sheetName = this.exportByXSSFWorkbook(new XSSFWorkbook(EXPORT_PATH), EXPORT_PATH, true, sheetName);
+    }
+    
+    private String exportByXSSFWorkbook(XSSFWorkbook workbook, String exportFilePath, boolean isAppend, String sheetName) throws FileNotFoundException, IOException {
 
+        String localSheetName = null;
+        try(FileOutputStream fos = new FileOutputStream(exportFilePath, isAppend);) {
             // プロパティ書き込み
             // SXSSFWorkbookだとエラーになる。
-            // this.writeProperties((XSSFWorkbook) workbook);
+            this.writeProperties(workbook);
 
-            // 本当はDataEnum.values()を使用すればループが使えるが、型ごとに確認したいため、分けて記載する。
-            // 整数
-            Cell cell = row.createCell(cellIndex++);
-            DataEnum.SEISU.setCellStyle(cell, workbook);
-            DataEnum.SEISU.setCellValue(cell, dataModel);
-            cell.setCellStyle(this.getCellStyle());
-            
-            // 小数
-            cell = row.createCell(cellIndex++);
-            DataEnum.SHOUSU.setCellStyle(cell, workbook);
-            DataEnum.SHOUSU.setCellValue(cell, dataModel);
-            cell.setCellStyle(this.getCellStyle());
-            
-            // 文字列
-            cell = row.createCell(cellIndex++);
-            DataEnum.MOJIRETSU.setCellStyle(cell, workbook);
-            DataEnum.MOJIRETSU.setCellValue(cell, dataModel);
-            cell.setCellStyle(this.getCellStyle());
-            
-            // 日付
-            cell = row.createCell(cellIndex++);
-            DataEnum.DATE.setCellStyle(cell, workbook);
-            DataEnum.DATE.setCellValue(cell, dataModel);
-            cell.setCellStyle(this.getCellStyle());
-            
-            // 曜日
-            cell = row.createCell(cellIndex++);
-            DataEnum.WEEK_OF_DAY.setCellStyle(cell, workbook);
-            DataEnum.WEEK_OF_DAY.setCellValue(cell, dataModel);
-            cell.setCellStyle(this.getCellStyle());
-
+            localSheetName = this.getSheet(workbook, sheetName).getSheetName();
+    
             workbook.write(fos);
             fos.close();
             workbook.close();
+
         }
+        return localSheetName;
     }
     
     private void writeProperties(XSSFWorkbook workbook) {
@@ -94,10 +66,73 @@ public class App {
         
     }
     
-    public CellStyle getCellStyle() {
+    private String writeValues(Workbook workbook, String exportFilePath, boolean isAppend, String sheetName) throws FileNotFoundException, IOException {
+
+        String localSheetName = null;
+        try(FileOutputStream fos = new FileOutputStream(EXPORT_PATH, isAppend);) {
+            Sheet sheet = this.getSheet(workbook, sheetName);
+            localSheetName = sheet.getSheetName();
+
+            Row row = sheet.createRow(line);
+            int cellIndex = 0;
+            
+            DataModel dataModel = new DataModel();
+            dataModel.setSeisu(1000000l);
+            dataModel.setShousu(111111.11d);
+            dataModel.setMojiretsu("hogehgoe");
+            dataModel.setDate(new Date());
+
+            // 本当はDataEnum.values()を使用すればループが使えるが、型ごとに確認したいため、分けて記載する。
+            // 整数
+            Cell cell = row.createCell(cellIndex++);
+            DataEnum.SEISU.setCellStyle(cell, workbook);
+            DataEnum.SEISU.setCellValue(cell, dataModel);
+            cell.setCellStyle(this.getCellStyle(workbook));
+            
+            // 小数
+            cell = row.createCell(cellIndex++);
+            DataEnum.SHOUSU.setCellStyle(cell, workbook);
+            DataEnum.SHOUSU.setCellValue(cell, dataModel);
+            cell.setCellStyle(this.getCellStyle(workbook));
+            
+            // 文字列
+            cell = row.createCell(cellIndex++);
+            DataEnum.MOJIRETSU.setCellStyle(cell, workbook);
+            DataEnum.MOJIRETSU.setCellValue(cell, dataModel);
+            cell.setCellStyle(this.getCellStyle(workbook));
+            
+            // 日付
+            cell = row.createCell(cellIndex++);
+            DataEnum.DATE.setCellStyle(cell, workbook);
+            DataEnum.DATE.setCellValue(cell, dataModel);
+            cell.setCellStyle(this.getCellStyle(workbook));
+            
+            // 曜日
+            cell = row.createCell(cellIndex++);
+            DataEnum.WEEK_OF_DAY.setCellStyle(cell, workbook);
+            DataEnum.WEEK_OF_DAY.setCellValue(cell, dataModel);
+            cell.setCellStyle(this.getCellStyle(workbook));
+
+            workbook.write(fos);
+            fos.close();
+            workbook.close();
+        }
+        return localSheetName;
+    }
+    
+    public Sheet getSheet(Workbook workbook, String sheetName) {
+        Sheet sheet = workbook.getSheet(sheetName);
+        if(sheet == null) {
+            sheet = workbook.createSheet(sheetName);
+        }
+        return sheet;
+        
+    }
+    
+    public CellStyle getCellStyle(Workbook workbook) {
 
         // 毎回CellStyleインスタンスを生成するのは本来はNG。Poiで指定できるCellStyleの数は上限がある。
-        CellStyle cellStyle = this.workbook.createCellStyle();
+        CellStyle cellStyle = workbook.createCellStyle();
 
         // 色を付ける
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
