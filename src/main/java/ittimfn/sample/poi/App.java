@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import ittimfn.sample.poi.enums.DataEnum;
 import ittimfn.sample.poi.model.DataModel;
@@ -39,6 +40,10 @@ public class App {
             dataModel.setShousu(111111.11d);
             dataModel.setMojiretsu("hogehgoe");
             dataModel.setDate(new Date());
+
+            // プロパティ書き込み
+            // SXSSFWorkbookだとエラーになる。
+            // this.writeProperties((XSSFWorkbook) workbook);
 
             // 本当はDataEnum.values()を使用すればループが使えるが、型ごとに確認したいため、分けて記載する。
             // 整数
@@ -71,17 +76,22 @@ public class App {
             DataEnum.WEEK_OF_DAY.setCellValue(cell, dataModel);
             cell.setCellStyle(this.getCellStyle());
 
-            // プロパティ書き込み
-            // 作成者
-            // workbook.getProperties().getCoreProperties().setCreator("");
-
-            // // プログラム名
-            // workbook.getProperties().getExtendedProperties().getUnderlyingProperties().setApplication("");
-
             workbook.write(fos);
             fos.close();
             workbook.close();
         }
+    }
+    
+    private void writeProperties(XSSFWorkbook workbook) {
+        // 作成者
+        workbook.getProperties().getCoreProperties().setCreator("");
+
+        // プログラム名
+        workbook.getProperties().getExtendedProperties().getUnderlyingProperties().setApplication("");
+        
+        // カスタムプロパティ
+        workbook.getProperties().getCustomProperties().addProperty("カスタムプロパティ", 12345);
+        
     }
     
     public CellStyle getCellStyle() {
